@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>숫자야구게임⚾</title>
+  </head>
+  <body>
+    <div>야구게임을 해볼까요?</div>
+    <form id="form">
+      <input
+        type="text"
+        id="input"
+        placeholder="네자리의 숫자를 입력해주세요."
+      />
+      <button>던지기</button>
+    </form>
+    <div id="logs"></div>
+    <script>
+      const $input = document.querySelector("#input");
+      const $form = document.querySelector("#form");
+      const $logs = document.querySelector("#logs");
+      const $button = document.querySelector('button');
+      let newNum;
+      const numbers = []; // [1,2,3,4,5,6,7,8,9]
+      for (let n = 0; n < 9; n++) {
+        numbers.push(n + 1);
+      }
+
+      const answer = [];
+      for (let i = 0; i < 4; i += 1) {
+        const index = Math.floor(Math.random() * (numbers.length - i));
+        answer.push(numbers[index]);
+        numbers.splice(index, 1);
+      }
+      console.log(answer);
+
+      // form 태그가 있을 시 이벤트 리스너는 input이 아닌 form 태그에 = html 표준
+      // event.preventDefault() : 브라우저의 기본 동작을 방지 (reload, 하이퍼링크)
+      // 길어질 것 같은 특정한 목적이 있는 코드는 함수로 따로 빼서 작성해야 가독성에 좋다.
+      // alert로 경고창 띄우는 것은 잘 안쓰는 추세
+
+      const tries = [];
+      const checkInput = (v) => {
+        if (v.length !== 4) {
+          // 입력값 자릿수 검사
+          return alert("4자리를 입력하세요");
+        }
+        if (new Set(v).size !== 4) {
+          // 입력값 중복 검사
+          return alert("중복되지 않은 숫자를 입력하세요.");
+        }
+        if (tries.includes(v)) {
+          // 중복 시도 검사
+          return alert("이미 시도한 숫자입니다.");
+        }
+        return true;
+      };
+      const defeated = () => {
+          $logs.append(`탈락입니다. 정답은 ${answer.join("")}`);
+          $form.removeEventListener('submit',game)
+          $input.disabled = true;
+          $button.textContent = '다시하기'
+        };
+      let out = 0;
+      const game = (e) => {
+        e.preventDefault();
+        const value = $input.value;
+        $input.value = "";
+        if (!checkInput(value)) {
+          return;
+        }
+
+        if (answer.join("") === value) {
+          $logs.textContent = "홈런 ⚾ ";
+          return;
+        }
+
+        let strike = 0;
+        let ball = 0;
+
+        // answer.forEach((ele,idx) => {
+        //   const index = value.indexOf(answer[idx]);
+        //   if (index > -1) {
+        //     index === i ? (strike += 1) : (ball += 1);
+        //   }
+        // })
+
+        for (let i = 0; i < answer.length; i++) {
+          const index = value.indexOf(answer[i]);
+          if (index > -1) {
+            index === i ? (strike += 1) : (ball += 1);
+          }
+        }
+
+        tries.push(value);
+        console.log(tries);
+
+        if (ball === 0 && strike === 0) {
+          out++;
+          $logs.append(`${out}번째 아웃입니다!`, document.createElement("br"));
+        } else {
+          $logs.append(
+            `${value}: ${strike} 스트라이크 ${ball} 볼`,
+            document.createElement("br")
+          );
+        }
+
+        if (out === 3) {
+          defeated();
+          return;
+        }
+
+        console.log(out);
+        if (tries.length > 4) {
+          defeated();
+          return;
+        }
+      }
+      
+      $form.addEventListener("submit",game);
+    </script>
+  </body>
+</html>
