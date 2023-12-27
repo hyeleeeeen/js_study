@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>쿵쿵따게임</title>
+</head>
+<body>
+    <h1>공포의.. 쿵쿵따를 시작해볼까..💀</h1>
+    <div><span id="order">1</span>번째 선수차례</div>
+    <h3>제시어 : <span id="word"></span></h3>
+    <input type="text" placeholder="입력하시오..."  >
+    <button>쿵쿵따</button>
+    <script>
+        const $input = document.querySelector("input")
+        const $button = document.querySelector("button")
+        const $order = document.querySelector("#order")
+        const $word = document.querySelector("#word")
+        const number = parseInt(prompt("몇명이 참가할거니"))
+        let word;
+        let newWord;
+        if (!number){
+            alert("Please enter")
+            location.reload();
+        }else {
+            confirm(`${number}명이 확실하니?`)
+        }
+
+        const onClickBtn = () => {
+            if (!word || (newWord.length === 3 && word[2] === newWord[0])){
+                word = newWord;
+                $word.textContent = word;
+                const order = parseInt($order.textContent)
+                order+1 > number ? $order.textContent = 1 : $order.textContent = order+1
+            } else {
+                alert("3 자리수의 단어를 올바르게 입력하시오.")
+            }
+            $input.value = '';
+            $input.focus();
+        }
+
+
+        const onInput = (e) => {
+           newWord = e.target.value
+        }
+
+        $button.addEventListener("click", onClickBtn);
+        $input.addEventListener("input", onInput);
+
+    </script>
+</body>
+</html>
