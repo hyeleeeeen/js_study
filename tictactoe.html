@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>틱택토게임</title>
+    <style>
+      table {
+        border-collapse: collapse;
+      }
+
+      td {
+        border: 1px solid black;
+        width: 40px;
+        height: 40px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      let turn = "O";
+      const $table = document.createElement("table");
+      const $result = document.createElement("div");
+      const rows = [];
+
+      // [
+      //  [td,td,td] 1.row cell,cell,cell
+      //  [td,td,td] 2.row cell,cell,cell
+      //  [td,td,td] 3.row cell,cell,cell
+      // ]
+
+      const checkWinner = (target) => {
+        const rowIndex = target.parentNode.rowIndex;
+        const cellIndex = target.cellIndex;
+
+        // 세칸 다 채워졌는지?
+        let hasWinner = false;
+
+        // 가로줄 검사
+        if (
+          rows[rowIndex][0].textContent === turn &&
+          rows[rowIndex][1].textContent === turn &&
+          rows[rowIndex][2].textContent === turn
+        ) {
+          hasWinner = true;
+        } else if (
+          // 세로줄 검사
+          rows[0][cellIndex].textContent === turn &&
+          rows[1][cellIndex].textContent === turn &&
+          rows[2][cellIndex].textContent === turn
+        ) {
+          hasWinner = true;
+        } else if (
+          // 대각선 검사
+          rows[0][0].textContent === turn &&
+          rows[1][1].textContent === turn &&
+          rows[2][2].textContent === turn
+        ) {
+          hasWinner = true;
+        } else if (
+          // 반대 대각선 검사
+          rows[0][2].textContent === turn &&
+          rows[1][1].textContent === turn &&
+          rows[2][0].textContent === turn
+        ) {
+          hasWinner = true;
+        }
+        return hasWinner;
+      };
+
+      const checkWinnerAndDraw = (target) => {
+        // 승부 판단하기
+        const hasWinner = checkWinner(target);
+        // 승자가 있으면
+        if (hasWinner) {
+          $result.textContent = `${turn}님이 승리!`;
+          $table.removeEventListener("click", callback);
+          return;
+        }
+        // 무승부 검사
+        const draw = rows.flat().every((cell) => cell.textContent); // 칸이 다 꽉차있다.
+        if (draw) {
+          $result.textContent = `무승부`;
+          return;
+        }
+        turn = turn === "X" ? "O" : "X";
+      };
+      let clickable = true; // 클릭방지 플래그
+
+      const callback = (e) => {
+        if (!clickable) return;
+
+        if (e.target.textContent !== "") {
+          // 빈칸이 아니면 함수 종료
+          return;
+        }
+        e.target.textContent = turn;
+        // 승부 판단하기
+
+        checkWinnerAndDraw(e.target);
+
+        if (turn === "X") {
+          // 자동 X기입
+          const emptyCells = rows.flat().filter((v) => !v.textContent); // 비어있는 칸 추출
+          const randomCell =
+            emptyCells[Math.floor(Math.random() * emptyCells.length)];
+          clickable = false; // setTimeout 실행이전 클릭방지
+
+          setTimeout(() => {
+            randomCell.textContent = "X";
+            checkWinnerAndDraw(randomCell);
+            clickable = true; // setTimeout 실행이후 클릭 가능
+          }, 500);
+        }
+      };
+
+      for (let i = 0; i < 3; i++) {
+        const $tr = document.createElement("tr");
+        const cells = [];
+        for (let j = 0; j < 3; j++) {
+          // 반복문안에 반복문 ==> 2차원배열의 특징
+          const $td = document.createElement("td");
+          cells.push($td); // 3줄 형성
+          $table.addEventListener("click", callback);
+          $tr.append($td);
+        }
+        rows.push(cells);
+        $table.append($tr);
+      }
+      document.body.append($table);
+      document.body.append($result);
+    </script>
+  </body>
+</html>
