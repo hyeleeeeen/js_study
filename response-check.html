@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>반응속도 알아보기</title>
+    <style>
+      #screen {
+        width: 300px;
+        height: 200px;
+        text-align: center;
+        user-select: none;
+      }
+
+      #screen.waiting {
+        background-color: powderblue;
+      }
+
+      #screen.ready {
+        background-color: hotpink;
+      }
+
+      #screen.now {
+        background-color: limegreen;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="screen" class="waiting">클릭해서 시작하기</div>
+    <div id="result"></div>
+
+    <script>
+        let startTime;
+        let endTime;
+        let timeout
+        const records = []
+      const $screen = document.querySelector("#screen");
+      const $result = document.querySelector("#result")
+      const btn = (e) => {
+        if (e.target.classList.contains("waiting")) { // 파란색일때
+          e.target.classList.replace("waiting", "ready");
+          e.target.textContent = "준비하세요";
+          timeoutId = setTimeout(() => {
+           startTime =  new Date();
+            e.target.classList.replace("ready", "now");
+            e.target.textContent = "클릭하세요";
+          }, Math.floor(Math.random() * 1000) + 2000); // 2초~ 3초
+        } else if (e.target.classList.contains("ready")) { // 분홍색일때
+            e.target.classList.replace("ready","waiting")
+            e.target.textContent = "너무 성급해요";
+            clearTimeout(timeoutId)
+        } else { // 초록색일때
+            endTime = new Date();
+            const current = endTime - startTime;
+            records.push(current)
+            const averange = Math.floor(records.reduce((a,c) => a+c ) / records.length);
+            const fastest = records.sort((a,b) =>  a-b).slice(0,5)
+            $result.textContent = `현재 : ${current}ms, 평균 : ${averange}ms`
+            fastest.forEach((t,i) => {
+              $result.append(document.createElement('br'),
+              `${i+1}위 : ${t}ms`
+              )
+            })
+            startTime = null;
+            endTime = null;
+            e.target.classList.replace("now","waiting")
+            e.target.textContent = "클릭해서 시작하세요";
+        }
+      };
+
+      $screen.addEventListener("click", btn);
+    </script>
+  </body>
+</html>
