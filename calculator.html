@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>계산기</title>
+  </head>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    #container {
+      width: fit-content;
+      background-color: ivory;
+      border: 3px solid rgb(143, 142, 142);
+      border-radius: 10px;
+    }
+    #resultInput {
+      width: 180px;
+      height: 50px;
+      margin: 5px;
+      text-align: right;
+      cursor: default;
+      outline: none;
+      border-radius: 7px;
+    }
+
+    #operatorInput {
+      width: 50px;
+      height: 50px;
+      margin: 5px;
+      text-align: center;
+      cursor: default;
+      outline: none;
+      border-radius: 7px;
+    }
+    button {
+      width: 50px;
+      height: 50px;
+      margin: 5px;
+      color: rgb(47, 153, 47);
+      background-color: rgb(241, 237, 178);
+      border: none;
+      border-radius: 30%;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: rgb(83, 97, 33);
+      color: white;
+    }
+  </style>
+  <body>
+    <div id="container">
+      <input readonly id="operatorInput" />
+      <input readonly type="number" id="resultInput" />
+      <div class="row">
+        <button id="num-1">1</button>
+        <button id="num-2">2</button>
+        <button id="num-3">3</button>
+        <button id="num-4">4</button>
+      </div>
+      <div class="row">
+        <button id="num-5">5</button>
+        <button id="num-6">6</button>
+        <button id="num-7">7</button>
+        <button id="num-8">8</button>
+      </div>
+      <div class="row">
+        <button id="num-9">9</button>
+        <button id="num-0">0</button>
+        <button id="clear">c</button>
+        <button id="calculate">=</button>
+      </div>
+      <div class="row">
+        <button id="plus">+</button>
+        <button id="minus">-</button>
+        <button id="multiply">*</button>
+        <button id="divide">/</button>
+      </div>
+    </div>
+    <script>
+      let numberOne = "";
+      let numberTwo = "";
+      let operator = "";
+      const $resultInput = document.querySelector("#resultInput");
+      const $operatorInput = document.querySelector("#operatorInput");
+      const onClickBtn = (e) => {
+        if (!operator) {
+            numberOne += e.target.textContent;
+            $resultInput.value += e.target.textContent;
+            return;
+        }
+        if (!numberTwo) {
+            $resultInput.value ="";
+        }
+        numberTwo += e.target.textContent;
+        $resultInput.value += e.target.textContent;
+        console.log(resultInput.value);
+      };
+      const onClickOp = (op) => () => {
+        if (numberOne) {
+          operator = op;
+          $operatorInput.value = op;
+        } else {
+          alert("숫자를 입력하세요");
+        }
+      };
+
+      document.querySelector("#num-1").addEventListener("click", onClickBtn);
+      document.querySelector("#num-2").addEventListener("click", onClickBtn);
+      document.querySelector("#num-3").addEventListener("click", onClickBtn);
+      document.querySelector("#num-4").addEventListener("click", onClickBtn);
+      document.querySelector("#num-5").addEventListener("click", onClickBtn);
+      document.querySelector("#num-6").addEventListener("click", onClickBtn);
+      document.querySelector("#num-7").addEventListener("click", onClickBtn);
+      document.querySelector("#num-8").addEventListener("click", onClickBtn);
+      document.querySelector("#num-9").addEventListener("click", onClickBtn);
+      document.querySelector("#num-0").addEventListener("click", onClickBtn);
+
+      document.querySelector("#plus").addEventListener("click", onClickOp("+"));
+      document
+        .querySelector("#minus")
+        .addEventListener("click", onClickOp("-"));
+      document
+        .querySelector("#multiply")
+        .addEventListener("click", onClickOp("*"));
+      document
+        .querySelector("#divide")
+        .addEventListener("click", onClickOp("/"));
+     
+      document.querySelector("#calculate").addEventListener("click", () => {
+        if (numberTwo) {
+          if (operator === "+") {
+            $resultInput.value = parseInt(numberOne) + parseInt(numberTwo);
+          }
+          if (operator === "-") {
+            $resultInput.value = numberOne - numberTwo;
+          }
+          if (operator === "*") {
+            $resultInput.value = numberOne * numberTwo;
+          }
+          if (operator === "/") {
+            $resultInput.value = numberOne / numberTwo;
+          }
+          $operatorInput.value = "";
+          numberOne = $resultInput.value;
+          operator = "";
+          numberTwo = "";
+          
+
+        } else {
+          alert("숫자를 입력하세요!");
+        }
+      });
+      document.querySelector("#clear").addEventListener("click", () => {
+        $operatorInput.value = "";
+        $resultInput.value = "";
+        numberOne = "";
+        operator = "";
+        numberTwo = "";
+      });
+    </script>
+  </body>
+</html>
